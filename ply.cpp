@@ -2,16 +2,27 @@
 using namespace std;
 
 /**  
-  board initState;
-  vector<legalMoves> possibleMoves;
-  board nextState;
+  Header file needs to define:
+  	struct legalMove
+	{	
+		int from;
+		int to;
+		int value;
+	};
+	
+  
+  
+  	legalMove n;
+  	board b;
+	vector<legalMove> possibleMoves;
+  	boolean comp;
   **/
 
 ply::ply() {};
 ply::~ply() {};
   
   //Purpose: Given a state of current board, generate all a vector containing all legal moves for the player
-  //Parameters: Board object containing current piece positions
+  //Parameters: Board object containing current piece positions; boolean variable for white or black players turn
 void ply::generateMoves(board m,bool comp)
 {
   legalMoves n;
@@ -23,14 +34,7 @@ void ply::generateMoves(board m,bool comp)
       
       if(m.B[i]==(1 || 3)) // if white piece
 	{
-	  if(m.B[i+4]==0 && ((i+4)<32)) // move to empty place
-	    {
-	      n.from = i;
-	      n.to = i+4;
-	      n.value = 0;
-	      possibleMoves.push(n);
-	    }
-	  
+	      
 	  if(m.B[i+4] == (2||4) && ((i+8)<32) && m.B[i+8] == 0) // Capture
 	    {
 	      n.from = i;
@@ -39,16 +43,18 @@ void ply::generateMoves(board m,bool comp)
 	      possibleMoves.push(n);
 	      
 	    }
+	  else if(m.B[i+4]==0 && ((i+4)<32)) // move to empty place
+	    {
+	      n.from = i;
+	      n.to = i+4;
+	      n.value = 0;
+	      possibleMoves.push(n);
+	    }
 	  
+	    
 	  if(i%8 != 1 && i%8 !=4 && i%8 != 0) //position is not on left side or right side of board
 	    {
-	      if(m.B[i+3]==0)
-		{
-		  n.from = i;
-		  n.to = i+3;
-		  n.value = 0;
-		  possibleMoves.push(n);
-		}
+
 	      if(m.B[i+3] == (2||4) && ((i+6)<32) && m.B[i+6] == 0) // Capture
 		{
 		  
@@ -56,12 +62,30 @@ void ply::generateMoves(board m,bool comp)
 		  n.to = i+6; 
       		  (m.B[i+3]==2)? n.value=1:n.value=2; 
 		  possibleMoves.push(n);
+		      
 		}
+		  
+		else if(m.B[i+3]==0)
+		{
+		  n.from = i;
+		  n.to = i+3;
+		  n.value = 0;
+		  possibleMoves.push(n);
+		}
+
 	    }
-	  if( ((i%8) >=1) && ((i%8)<=3))
+	  if( ((i%8) >=1) && ((i%8)<=3) && i<21)
 	    {
+		  
+		if(m.B[i+5] == (2||4) && ((i+9)<32) && m.B[i+9] == 0) // Capture
+		{
+		n.from = i;
+		n.to = i+9; 
+      		(m.B[i+5]==2)? n.value=1:n.value=2; 
+		possibleMoves.push(n);
+		}      
 	      //move to empty space
-	    if(m.B[i+5]==0)
+	    else if(m.B[i+5]==0)
 	      {
 		n.from = i;
 		n.to = i+5;
@@ -76,14 +100,7 @@ void ply::generateMoves(board m,bool comp)
 	    // Diagnol Up&Left 
 	    if(i%8!=5 && i>4)
 	      {
-		if(m.B[i-4]==0) //Move to empty space
-		  {
-		    n.from =i;
-		    n.to = i-4;
-		    n.value = 0;
-		    possibleMoves.push(n);
-		  }
-		else if(m.B[i-4]==(2||4) && m.B[i-7]==0 && (i-7 >=1)) // Capture
+		if(m.B[i-4]==(2||4) && m.B[i-7]==0 && (i-7 >=1)) // Capture
 		  {
 		    n.from = i;
 		    n.to = i-7;
@@ -91,20 +108,25 @@ void ply::generateMoves(board m,bool comp)
 		    possibleMoves.push(n);
 		    
 		  }
+		    
+		    
+		    
+		else if(m.B[i-4]==0) //Move to empty space
+		  {
+		    n.from =i;
+		    n.to = i-4;
+		    n.value = 0;
+		    possibleMoves.push(n);
+		  }
+		
+
 	      }
 	    
 	  //Move king to empty space/capture
 	    if(i%!=4 && i>4)
-	      {//empty space
-		if(m.B[i-3]==0)
-		  {
-		    n.from =i;
-		    n.to = i-3;
-		    n.value = 0;
-		    possibleMoves.push(n);
-		}
+	      {
 		//Captures piece
-		else if(m.B[i-3]==(2 || 4))
+		if(m.B[i-3]==(2 || 4))
 		  {
 		    if(i<=31 && i>=9 && i%8!=0 && m.B[i-7]==0)
 		      {
@@ -114,6 +136,14 @@ void ply::generateMoves(board m,bool comp)
 			possibleMoves.push(n);
 		      }
 		  }
+		//Empty space
+		else if(m.B[i-3]==0)
+		  {
+		    n.from =i;
+		    n.to = i-3;
+		    n.value = 0;
+		    possibleMoves.push(n);
+		  }
 	      }
 	  }
 
@@ -121,7 +151,7 @@ void ply::generateMoves(board m,bool comp)
 	//End of white piece/white king section
 
     }
-  return;
+  goto exit;
 
   
   
@@ -134,7 +164,7 @@ void ply::generateMoves(board m,bool comp)
 	{
 	  if(i>4)
 		{
-		  if( m.B[i-4]==0)
+		  if(m.B[i-4]==0)
 		    {
 		      n.from=i;
 		      n.to=i-4;
@@ -276,6 +306,8 @@ void ply::generateMoves(board m,bool comp)
 		}
 	}
     }
+exit: 			  
+	return;
 }
 
 		    

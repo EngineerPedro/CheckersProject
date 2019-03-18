@@ -57,15 +57,53 @@ using namespace std;
              m.B[i+3] = empty;           
              possibleMoves.push(n);
           }
-          if((i>=1&&<5)
-        }
-    
+	}
+	if( (i%8) >=1 && (i%8)<=3)
+	  {
+	    //move to empty space
+	    if(m.B[i+5]==0)
+	      {
+		n.from = i;
+		  n.to = i+5;
+		  n.value = 0;
+		  possibleMove.push(n);
+	      }
+	    
+	  }
+	  
         if(m.B[i]==3) // white king
         {
-          
+	  // Diagnol Up&Left 
+	  if(i%8!=5 && i>4) && m.B[i-4]==0)
+	    {
+	      if(m.B[i-4]==0) //Move to empty space
+		{
+		  n.from =i;
+		  n.to = i-4;
+		  n.value = 0;
+		  possibleMoves.push(n);
+		}
+	      else if(m.B[i-4]%2==0 && m.B[i-7]==0 && i-7 >=1) // Capture
+		{
+		  n.from = i;
+		  n.to = i-7;
+		  n.value = 1;
+		  possibleMoves.push(n);
+		  
+		}
+	    }
+
+	    
+	  if(i%!=4 && i>4 && m.B[i-3]==0)
+	    {
+	      n.from =i;
+	      n.to = i-3;
+	      n.value = 0;
+	      possibleMoves.push(n);
+	    }
           
         }
-      
+      }
       
       }
       

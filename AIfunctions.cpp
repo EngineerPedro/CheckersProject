@@ -5,182 +5,101 @@
 #include <iostream>
 #include <limits>
 #include <cstdint>
-
 #include "AIfunctions.h"
 
-AIfunctions:: AIfunctions
-{
-}
+#define INFINITE 30000
 
-AIfunctions :: ~AIfunctions
-{
-}
 
-int AIfunctions :: iterative_deep(std::vector <Move> &moves,Move &bestop, bool &keyturn, Player Maximize)
-{
+AIfunctions :: AIfunctions(){};
 
-  int depth = 1;
-  int finished =0;
-  Move k;
-  bool maxDepthReached;
-  while(!keyturn)
+AIfunctions :: ~AIfunctions(){};
+
+int AIfunctions :: Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Player,int Node_Index,int values[][])
+{
+  //Terminating condition
+  //leaf node is reached 
+  cout<<"Checking if depth is set to MAX_DEPTH "<endl;
+  if (depth == MAX_DEPTH )/*if node is a leaf return it's value*/
   {
-    maxDepthReached = alpha_beta_start(depth,k,keyturn,maximize);
-    if(!keyturn)
+    return values [Node_Index] [Node_Index];
+  }
+  
+  cout<<"Check_Point_1"<<endl
+  if (Maximizing_Player)
+  {
+  int bestVal = -MAX_DEPTH;
+    
+     cout<<"Check_Point_2 begining Pruning"<<endl
+    //Recur for left and right child/leaf
+    for (int i = 0; i < MAX_DEPTH ;i++ )
     {
-      bestop = k;
-      finished = depth;
+      int val = Alpha_Beta(alpha,beta,depth+1,false,Node_Index*2+1,values[][]);
+      bestVal = max(bestVal,val);
+      alpha  = max(alpha,bestVal);
+      
+      //Alpha Beta Pruning
+        if (beta <= alpha)
+          break;
     }
-    if(!maxDepthReached)
-      keyturn = true;
-      depth + = 2;
-  }
-  return finished;
-}
-
-bool AIfunctions :: alpha_beta_start(std::vector<Move> &move,bool &keyturn,int depth,Move &bestop ,Player maximize)
-{
-  int beta = std::value_limits<int > :: max();
-  int alpha = std::value_limits<int > :: min();
-  int best = std::value_limits<int > :: min();
-  bool maxDepthReached = false;
-  for(auto move : moves){
-   int k =move.board -> alpha_beta(alp,beta,depth-1,maximize,other_player(maximize),maxDepthReached,keyturn); 
-   if(best<k){
-      bestop = move;
-      alpha = k;
-      best= k;
-   }
-    if(beta <= alpha)
-      break;
-  }
-  return maxDepthReached;
-}
-
-int AIfunctions :: alpha_beta(size_t depth, int alpha, int beta, PLayer maximize, Play current, bool &maxDepthReached, bool & keyturn )
-{
-  if (keyturn){return 0;}
-  
-  if (depth==0)
-  {
-    maxDepthReached =true;
-    return score(maximize);
-  }
-  std::vector<Move> moves;
-  possible_moves(current, moves);
-  seperated_moves(moves, false);
-  
-  if (moves.size() == 0){
-    if(current ==  maximize)
-      return std::value_limits<int> :: lowest();
-    return std::value_limits<int> ::max();
-  }
-  
-  if(current == maximize){
-    for(auto move : moves){
-      int v = move.AIfunctions->alpha_beta(depth-1,alpha,beta,maximize,other_player(current), keyturn, maxDepthReached)
-      alpha = std :: max(alpha,v);
-      if (beta <= alpha)
-        break; 
-    }
-    return alpha;
+    cout<<"Check_Point_4 breaking out returning value "<<endl
+    return bestVal;
   }
   else
   {
-    for (auto move : move)
-    {
-      int v = move.AIfunctions->alpha_beta(depth-1,alpha,beta,maximize, other_player(current),keyturn,maxDepthReached);
-      beta = std ::min(beta, v);
-      
-      if(beta<=alpha)
-        break;
-    }
-    return beta;
+   int bestVal = MAX_DEPTH; 
+    
+    //Recur for left and right leaf/child
+    cout<<"Check_Point_5 going into pruning "<<endl
+      for (int j =0;j<MAX_DEPTH;j++)
+      {
+        int val = Alpha_Beta(alpha,beta,depth+1,true,Node_Index*2+1,values[][]);
+        bestVal = miin(bestVal,val);
+        beta = min(beta, bestVal);
+        
+        //Alpha Beta Pruning
+        if (beta <= alpha)
+          break;
+      }
+    cout<<"Check_Point_6:breaking out returning value "<<endl
+    return bestVal;
   }
 }
-/*
-int64_t AIfunctions :: score(Player p)
+ 
+
+
+bool AIfunctions :: DLS(int src, int target,int limit)
 {
-  int cadence = 0;
-  cadence+= score_0()* 1e12;
-  cadence+= score_1()* 1e9;
-  cadence+= score_2()* 1e6;
-  cadence+= score_3()* 1e3;
   
-  cadence += rand() % 100;
+  if (src == target){return true;}
   
-  return p == White ? cadence : -cadence;
-}
-
-int64_t AIfunctions ::  score_0()
-{
-  const int k_mass = 2;
-  const int b_mass = 3;
-  return k_mass w_kings-count()
-        -k_mass * b_kings ->count()
-        +b_mass * w_pieces ->count()
-        -b_masst * b_pieces ->count();
-}
-
-int64_t AIfunctions :: score_1()
-{
-  return w_pieces->count() - b_pieces->count;
-}
-
-int64_t AIfunctions :: score_2
-{
-int64_t cadence = 0;
-if (w_pieces->count()< 4 || b_pieces->count() < 4)
+  //if reached the maximum depth, stop reaching 
+  //stop recursing 
+  if(limit <= 0){return false;}
+  
+  //Recur for all the verticies adjacent to source vertex 
+  for (auto i = adj[src].begin(); i != adj[src].end(); ++i)
   {
-  if((w_pieces->count()<b_pieces->count() ) )
-  {
-  if((*w_pieces)[0] || (*w_pieces)[4])
-  {
-  cadence += 9;
-  cadence -= (*b_pieces)[0] * 3;
-  cadence -= (*b_pieces)[4] * 3;
-  cadence -= (*b_pieces)[1] * 1;
-  cadence -= (*b_pieces)[5] * 1;
-  cadence -= (*b_pieces)[8] * 1;
-  cadence -= (*b_pieces)[12] * 1;
+    if (DLS(*i,target,limit - 1)==true)
+      return true
   }
-  if ((*w_pieces)[27] || (*w_pieces)[31])
-    {
-     cadence += 9;
-     cadence -= (*b_pieces)[27] * 3 ;
-     cadence -= (*b_pieces)[31] * 3 ;
-     cadence -= (*b_pieces)[19] * 1 ;
-     cadence -= (*b_pieces)[]23 * 1 ;
-     cadence -= (*b_pieces)[26] * 1 ;
-     cadence -= (*b_pieces)[30] * 1 ;
-     
-    }  
-   }
-   if((b_pieces->count() < w_pieces->()))
-   {
-    if((*w_pieces)[27] || (*w_pieces)[31])
-    {
-    cadence -= 9;
-    cadence += (*w_pieces)[0] *3 ;
-    cadence += (*w_pieces)[4] *3 ;
-    cadence += (*w_pieces)[1] *1 ;
-    cadence += (*w_pieces)[5] *1 ;
-    cadence += (*w_pieces)[8] *1 ;
-    cadence += (*w_pieces)[12] *1;
-    }
-    if ((*b_pieces)[27] || (*b_pieces)[31])
-    {
-    cadence -= 9;
-    cadence += (*w_pieces)[27]* 3;
-    cadence += (*w_pieces)[31]* 3;
-    cadence += (*w_pieces)[19]* 1;
-    cadence += (*w_pieces)[23]* 1;
-    cadence += (*w_pieces)[26]* 1;
-    cadence += (*w_pieces)[30]* 1;
-    }
-   }
-  }
-return cadence;
+  return true;
 }
 
-*/
+//Iterative_Deepening_DFS to search if target is reachablefrom v.
+//it uses recursive DFSUtil().
+bool AIfunctions :: Iterative_Deepening_DFS(int src, int target,int max_depth)
+{
+//bool IDDFS(src, target, max_depth)
+int max_depth = -INFINITE; 
+  for(int limit = 0 ; limit <= max_depth ; limit++)
+  {//foreach adjacent i or src 
+    if (DLS(src,target, limit) == true)   
+      //if DLS (i, target,limit?1)
+        //return true;
+        return true;
+   }
+  return false;
+}
+
+
+

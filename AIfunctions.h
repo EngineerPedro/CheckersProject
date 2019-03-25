@@ -36,9 +36,7 @@ class  AIfunctions
   public :
   AIfunctions();
   ~AIfunctions();
-  //the PASS
-  //auto pass_the_code(spacestate *PTR);
-  //AI Functions 
+  string int_to_string(int value);
   bool DLS(int src, int target,int limit);
   int Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Player,int Node_Index,int values[]);
   bool Iterative_Deepening_DFS(int src, int target,int max_depth);

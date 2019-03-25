@@ -7,8 +7,24 @@ AIfunctions :: AIfunctions(){};
 
 AIfunctions :: ~AIfunctions(){};
 
+string AIfunctions:: int_to_string(int value)
+  {
+    string res="";
+    while (value>0)
+    {
+      res += char(value%10 + 48);
+      value /= 10;
+    }
+    for (int i=0;i<res.length()/2;i++)
+    {
+      swap(res[i],res[res.length()-i-1]);
+    }
+    return res;
+  }
+
 int AIfunctions :: Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Player,int Node_Index,int values[])
 {
+  
   //Terminating condition
   //leaf node is reached 
   cout<<"Checking if depth is set to MAX_DEPTH :"<< depth <<endl;

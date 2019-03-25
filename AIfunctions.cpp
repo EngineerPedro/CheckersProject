@@ -1,18 +1,21 @@
 
 #include "AIfunctions.h"
+//game state is the src 
+//generateMoves  is target 
 
 AIfunctions :: AIfunctions(){};
 
 AIfunctions :: ~AIfunctions(){};
 
-int AIfunctions :: Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Player,int Node_Index,int values[8][8])
+int AIfunctions :: Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Player,int Node_Index,int values[])
 {
   //Terminating condition
   //leaf node is reached 
-  cout<<"Checking if depth is set to MAX_DEPTH "<<endl;
+  cout<<"Checking if depth is set to MAX_DEPTH :"<< depth <<endl;
   if (depth == MAX_DEPTH )/*if node is a leaf return it's value*/
   {
-    return values [Node_Index] [Node_Index];
+    return values[Node_Index];
+    //return *parent.value->Node_Index;
   }
   
   cout<<"Check_Point_1"<<endl;
@@ -35,13 +38,14 @@ int AIfunctions :: Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Pla
     cout<<"Check_Point_4 breaking out returning value "<<endl;
     return bestVal;
   }
+  
   else
   {
    int bestVal = MAX_DEPTH; 
     
     //Recur for left and right leaf/child
     cout<<"Check_Point_5 going into pruning "<<endl;
-      for (int j =0;j<MAX_DEPTH;j++)
+      for (int j =0; j<MAX_DEPTH ;j++)
       {
         int val = Alpha_Beta(alpha,beta,depth+1,true,Node_Index*2+1,values);
         bestVal = min(bestVal,val);
@@ -60,7 +64,7 @@ int AIfunctions :: Alpha_Beta(int alpha, int beta, int depth,bool Maximizing_Pla
 
 bool AIfunctions :: DLS(int src, int target,int limit)
 {
-  
+  /*
   if (src == target){return true;}
   
   //if reached the maximum depth, stop reaching 
@@ -68,18 +72,21 @@ bool AIfunctions :: DLS(int src, int target,int limit)
   if(limit <= 0){return false;}
   
   //Recur for all the verticies adjacent to source vertex 
-  for (auto i = adj[src].begin(); i != adj[src].end(); ++i)
+  for (auto *i = adj[src].from; i != adj[src].to; ++i)
   {
     if (DLS(*i,target,limit - 1)==true)
       return true;
   }
+  */
   return true;
+  
 }
 
 //Iterative_Deepening_DFS to search if target is reachablefrom v.
 //it uses recursive DFSUtil().
 bool AIfunctions:: Iterative_Deepening_DFS(int src, int target,int max_depth)
 {
+  /*
 //bool IDDFS(src, target, max_depth)
 int maxdepth = -MAX_DEPTH; 
   for(int limit = 0 ; limit <= maxdepth ; limit++)
@@ -89,7 +96,9 @@ int maxdepth = -MAX_DEPTH;
         //return true;
         return true;
    }
+   */
   return false;
+  
 }
 
 
